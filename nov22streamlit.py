@@ -445,10 +445,10 @@ def encode_row(client, maid):
     # row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
 
    # ----- CLIENT: dayoff -----
-   day = str(client.get('clientmts_dayoff_policy', 'unspecified')).lower()
-   row['client_dayoff_flexible'] = 1 if 'flexible' in day else 0
-   row['client_dayoff_work_for_pay'] = 1 if 'work_for_pay' in day else 0
-   row['client_dayoff_stay_home_for_pay'] = 1 if 'stay_home_for_pay' in day else 0
+   # day = str(client.get('clientmts_dayoff_policy', 'unspecified')).lower()
+    row['client_dayoff_flexible'] = 0
+    row['client_dayoff_work_for_pay'] = 0
+    row['client_dayoff_stay_home_for_pay'] = 0
 
 
     # ----- CLIENT: nationality preference -----
