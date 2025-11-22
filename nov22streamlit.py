@@ -13,7 +13,8 @@ feature_columns = [
    'maid_nat_west_african', 'client_household_baby', 'client_household_many_kids',
    'client_special_elderly', 'client_special_special_needs',
    'client_pet_cat', 'client_pet_dog', 'clientpref_filipina', 'clientpref_ethiopian_maid',
-   'clientpref_west_african_nationality', 'clientpref_indian',
+   'clientpref_west_african_nationality', 'clientpref_indian','client_dayoff_flexible', 'client_dayoff_work_for_pay'
+   'client_dayoff_stay_home_for_pay'
    'client_living_private_room', 'client_living_live_out',
    'client_living_abu_dhabi', 'client_cuisine_lebanese',
    'client_cuisine_khaleeji', 'client_cuisine_international',
@@ -443,6 +444,13 @@ def encode_row(client, maid):
     # row['client_dayoff_work_for_pay'] = int('work_for_pay' in day)
     # row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
 
+   # ----- CLIENT: dayoff -----
+   day = str(client.get('clientmts_dayoff_policy', 'unspecified')).lower()
+   row['client_dayoff_flexible'] = 1 if 'flexible' in day else 0
+   row['client_dayoff_work_for_pay'] = 1 if 'work_for_pay' in day else 0
+   row['client_dayoff_stay_home_for_pay'] = 1 if 'stay_home_for_pay' in day else 0
+
+
     # ----- CLIENT: nationality preference -----
     nat_pref = str(client['clientmts_nationality_preference']).lower()
     row['clientpref_filipina'] = int('filipina' in nat_pref)
@@ -714,6 +722,7 @@ if uploaded_file:
                 "clientmts_household_type": c_household,
                 "clientmts_special_cases": c_special,
                 "clientmts_pet_type": c_pets,
+                "clientmts_dayoff_policy": "unspecified",
                 "clientmts_living_arrangement": c_living,
                 "clientmts_nationality_preference": c_nationality,
                 "clientmts_cuisine_preference": cuisine_pref
