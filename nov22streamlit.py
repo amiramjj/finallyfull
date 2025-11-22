@@ -12,9 +12,7 @@ feature_columns = [
    'maid_cooking_not_specified', 'maid_nat_ethiopian', 'maid_nat_indian',
    'maid_nat_west_african', 'client_household_baby', 'client_household_many_kids',
    'client_special_elderly', 'client_special_special_needs',
-   'client_pet_cat', 'client_pet_dog', 'client_dayoff_flexible',
-   'client_dayoff_work_for_pay', 'client_dayoff_stay_home_for_pay',
-   'clientpref_filipina', 'clientpref_ethiopian_maid',
+   'client_pet_cat', 'client_pet_dog', 'clientpref_filipina', 'clientpref_ethiopian_maid',
    'clientpref_west_african_nationality', 'clientpref_indian',
    'client_living_private_room', 'client_living_live_out',
    'client_living_abu_dhabi', 'client_cuisine_lebanese',
@@ -439,11 +437,11 @@ def encode_row(client, maid):
     row['client_pet_cat'] = int('cat' in pet)
     row['client_pet_dog'] = int('dog' in pet)
 
-    # ----- CLIENT: dayoff -----
-    day = str(client['clientmts_dayoff_policy']).lower()
-    row['client_dayoff_flexible'] = int('flexible' in day)
-    row['client_dayoff_work_for_pay'] = int('work_for_pay' in day)
-    row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
+    # # ----- CLIENT: dayoff -----
+    # day = str(client['clientmts_dayoff_policy']).lower()
+    # row['client_dayoff_flexible'] = int('flexible' in day)
+    # row['client_dayoff_work_for_pay'] = int('work_for_pay' in day)
+    # row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
 
     # ----- CLIENT: nationality preference -----
     nat_pref = str(client['clientmts_nationality_preference']).lower()
