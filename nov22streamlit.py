@@ -738,7 +738,6 @@ if uploaded_file:
     
             # Detailed explanations
             for match in top_matches:
-            for match in top_matches:
                 maid_row = maids_df[maids_df["maid_id"] == match["maid_id"]].iloc[0]
             
                 with st.expander(f"Maid {match['maid_id']} → {match['Final Score %']}%"):
