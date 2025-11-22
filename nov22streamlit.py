@@ -438,18 +438,11 @@ def encode_row(client, maid):
     row['client_pet_cat'] = int('cat' in pet)
     row['client_pet_dog'] = int('dog' in pet)
 
-    # # ----- CLIENT: dayoff -----
-    # day = str(client['clientmts_dayoff_policy']).lower()
-    # row['client_dayoff_flexible'] = int('flexible' in day)
-    # row['client_dayoff_work_for_pay'] = int('work_for_pay' in day)
-    # row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
-
-   # ----- CLIENT: dayoff -----
-   # day = str(client.get('clientmts_dayoff_policy', 'unspecified')).lower()
-   row['client_dayoff_flexible'] = 0
-   row['client_dayoff_work_for_pay'] = 0
-   row['client_dayoff_stay_home_for_pay'] = 0
-
+    # ----- CLIENT: dayoff -----
+    # Always neutral for UI, but required for model
+    row['client_dayoff_flexible'] = 0
+    row['client_dayoff_work_for_pay'] = 0
+    row['client_dayoff_stay_home_for_pay'] = 0
 
     # ----- CLIENT: nationality preference -----
     nat_pref = str(client['clientmts_nationality_preference']).lower()
