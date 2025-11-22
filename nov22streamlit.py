@@ -671,8 +671,8 @@ def encode_row(client, maid):
 model_3day = joblib.load("model_lgb_3day.pkl")
 model_1week = joblib.load("model_lgb_1week.pkl")
 
-    # ---------------- Tab 3: Customer Interface ----------------
-    with tab3:
+# ---------------- Tab 3: Customer Interface ----------------
+with tab3:
         st.write("### Try Your Own Preferences")
     
         # Input widgets
