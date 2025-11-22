@@ -13,8 +13,8 @@ feature_columns = [
    'maid_nat_west_african', 'client_household_baby', 'client_household_many_kids',
    'client_special_elderly', 'client_special_special_needs',
    'client_pet_cat', 'client_pet_dog', 'clientpref_filipina', 'clientpref_ethiopian_maid',
-   'clientpref_west_african_nationality', 'clientpref_indian','client_dayoff_flexible', 'client_dayoff_work_for_pay'
-   'client_dayoff_stay_home_for_pay'
+   'clientpref_west_african_nationality', 'clientpref_indian','client_dayoff_flexible', 'client_dayoff_work_for_pay',
+   'client_dayoff_stay_home_for_pay',
    'client_living_private_room', 'client_living_live_out',
    'client_living_abu_dhabi', 'client_cuisine_lebanese',
    'client_cuisine_khaleeji', 'client_cuisine_international',
