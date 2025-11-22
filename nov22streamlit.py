@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import joblib
+
 
 # ------------------------------
 # Page Config
@@ -541,6 +543,133 @@ if uploaded_file:
         )
     
 
+def encode_row(client, maid):
+    """Recreate the exact encoded feature row used in training."""
+    
+    row = {}
+
+    # ----- BASIC NUMERIC -----
+    row['cc_type'] = 0  # always live-out unless you want UI support later
+    row['years_of_experience'] = maid.get('years_of_experience', 0)
+    row['total_complaints'] = maid.get('total_complaints', 0)
+    
+    # ----- LANGUAGE FLAGS -----
+    for lang in ['maidspeaks_amharic','maidspeaks_arabic','maidspeaks_english',
+                 'maidspeaks_french','maidspeaks_oromo']:
+        row[lang] = maid.get(lang, 0)
+
+    row['num_languages'] = sum([
+        maid.get('maidspeaks_amharic',0),
+        maid.get('maidspeaks_arabic',0),
+        maid.get('maidspeaks_english',0),
+        maid.get('maidspeaks_french',0),
+        maid.get('maidspeaks_oromo',0)
+    ])
+    
+    # ----- MAID NATIONALITY -----
+    nat = str(maid.get('maid_grouped_nationality','filipina')).lower()
+    row['maid_nat_ethiopian'] = int(nat=='ethiopian')
+    row['maid_nat_indian'] = int(nat=='indian')
+    row['maid_nat_west_african'] = int(nat=='west_african')
+
+    # ----- COOKING -----
+    for col in ['maid_cooking_khaleeji','maid_cooking_lebanese',
+                'maid_cooking_international','maid_cooking_not_specified']:
+        row[col] = maid.get(col,0)
+
+    # ----- CLIENT: household -----
+    house = str(client['clientmts_household_type']).lower()
+    row['client_household_baby'] = int('baby' in house)
+    row['client_household_many_kids'] = int('many_kids' in house)
+
+    # ----- CLIENT: special cases -----
+    spec = str(client['clientmts_special_cases']).lower()
+    row['client_special_elderly'] = int('elderly' in spec)
+    row['client_special_special_needs'] = int('special' in spec)
+
+    # ----- CLIENT: pets -----
+    pet = str(client['clientmts_pet_type']).lower()
+    row['client_pet_cat'] = int('cat' in pet)
+    row['client_pet_dog'] = int('dog' in pet)
+
+    # ----- CLIENT: dayoff -----
+    day = str(client['clientmts_dayoff_policy']).lower()
+    row['client_dayoff_flexible'] = int('flexible' in day)
+    row['client_dayoff_work_for_pay'] = int('work_for_pay' in day)
+    row['client_dayoff_stay_home_for_pay'] = int('stay_home_for_pay' in day)
+
+    # ----- CLIENT: nationality preference -----
+    nat_pref = str(client['clientmts_nationality_preference']).lower()
+    row['clientpref_filipina'] = int('filipina' in nat_pref)
+    row['clientpref_ethiopian_maid'] = int('ethiopian' in nat_pref)
+    row['clientpref_west_african_nationality'] = int('west african' in nat_pref)
+    row['clientpref_indian'] = int('indian' in nat_pref)
+
+    # ----- CLIENT: living arrangement -----
+    liv = str(client['clientmts_living_arrangement']).lower()
+    row['client_living_private_room'] = int('private_room' in liv)
+    row['client_living_live_out'] = int('live_out' in liv)
+    row['client_living_abu_dhabi'] = int('abu_dhabi' in liv)
+
+    # ----- CLIENT: cuisine -----
+    cui = str(client['clientmts_cuisine_preference']).lower()
+    row['client_cuisine_lebanese'] = int('lebanese' in cui)
+    row['client_cuisine_khaleeji'] = int('khaleeji' in cui)
+    row['client_cuisine_international'] = int('international' in cui)
+
+    # ----- MAID RESTRICTIONS -----
+    mh = str(maid.get('maidmts_household_type','')).lower()
+    row['maid_household_refuses_baby'] = int('refuses_baby' in mh)
+    row['maid_household_refuses_many_kids'] = int('refuses_many_kids' in mh)
+
+    mp = str(maid.get('maidmts_pet_type','')).lower()
+    row['maid_pet_refuses_cat'] = int('cat' in mp)
+    row['maid_pet_refuses_dog'] = int('dog' in mp)
+
+    row['maid_dayoff_refuses_fixed_sunday'] = int(
+        maid.get('maidmts_dayoff_policy','') == 'refuses_fixed_sunday'
+    )
+
+    ml = str(maid.get('maidmts_living_arrangement','')).lower()
+    row['maid_living_requires_private_room'] = int('requires_private_room' in ml)
+    row['maid_living_refuses_abu_dhabi'] = int('refuses_abu_dhabi' in ml)
+
+    # ----- MAID PREFS -----
+    edu = str(maid.get('maidpref_education','')).lower()
+    row['maidpref_edu_school'] = int('school' in edu)
+    row['maidpref_edu_university'] = int('university' in edu)
+
+    kexp = str(maid.get('maidpref_kids_experience','')).lower()
+    row['maidpref_kids_exp_lessthan2'] = int('lessthan2' in kexp)
+    row['maidpref_kids_exp_above2'] = int('above2' in kexp)
+
+    pet2 = str(maid.get('maidpref_pet_handling','')).lower()
+    row['maidpref_pet_cats'] = int('cats' in pet2)
+    row['maidpref_pet_dogs'] = int('dogs' in pet2)
+
+    pers = str(maid.get('maidpref_personality','')).lower()
+    row['maidpref_pers_energetic'] = int('energetic' in pers)
+    row['maidpref_pers_no_attitude'] = int('no_attitude' in pers)
+    row['maidpref_pers_no_tiktok'] = int('no_tiktok' in pers)
+    row['maidpref_pers_veg_friendly'] = int('veg_friendly' in pers)
+
+    trav = str(maid.get('maidpref_travel','')).lower()
+    row['maidpref_travel_travel'] = int('travel' in trav)
+    row['maidpref_travel_relocate'] = int('relocate' in trav)
+
+    row['maidpref_non_smoker'] = int(
+        maid.get('maidpref_smoking','unspecified') == 'non_smoker'
+    )
+
+    care = str(maid.get('maidpref_caregiving_profile','')).lower()
+    row['maidpref_care_elderly_experienced'] = int('elderly' in care)
+    row['maidpref_care_special_needs'] = int('special' in care)
+
+    return row
+
+# Load models
+model_3day = joblib.load("model_lgb_3day.pkl")
+model_1week = joblib.load("model_lgb_1week.pkl")
 
     # ---------------- Tab 3: Customer Interface ----------------
     with tab3:
@@ -555,7 +684,7 @@ if uploaded_file:
         c_cuisine = st.multiselect("Cuisine Preference", ["lebanese", "khaleeji", "international"])
         cuisine_pref = "+".join(c_cuisine) if c_cuisine else "unspecified"
     
-        # Button to run match
+        # Build client row (with day-off policy set to unspecified/ignored)
         if st.button("Find Best Maids"):
             client_row = {
                 "clientmts_household_type": c_household,
@@ -563,27 +692,54 @@ if uploaded_file:
                 "clientmts_pet_type": c_pets,
                 "clientmts_living_arrangement": c_living,
                 "clientmts_nationality_preference": c_nationality,
-                "clientmts_cuisine_preference": cuisine_pref
+                "clientmts_cuisine_preference": cuisine_pref,
+                "clientmts_dayoff_policy": "unspecified"  # <-- ignored safely (all zeros)
             }
     
             results = []
             for _, maid_row in maids_df.iterrows():
-                row = {**client_row, **maid_row.to_dict()}
-                score, reasons, bonus_reasons = calculate_score(row)
+                merged_row = {**client_row, **maid_row.to_dict()}
+    
+                # MATCH SCORE
+                score, reasons, bonus_reasons = calculate_score(merged_row)
+    
                 results.append({
                     "maid_id": maid_row["maid_id"],
                     "Final Score %": score,
                     **reasons,
-                    "Bonus Reasons": ", ".join(bonus_reasons) if bonus_reasons else "None"
+                    "Bonus Reasons": ", ".join(bonus_reasons) if bonus_reasons else "None",
+                    "maid_row_full": maid_row.to_dict(),
                 })
     
             top_matches = sorted(results, key=lambda x: x["Final Score %"], reverse=True)[:3]
-            top_df = pd.DataFrame(top_matches)
+            top_df = pd.DataFrame([{k:v for k,v in row.items() if k!="maid_row_full"} for row in top_matches])
             st.dataframe(top_df)
     
-            # Detailed explanations
+            # --- Detailed Explanations + Risk Predictions ---
             for match in top_matches:
+                maid_info = match["maid_row_full"]
+                encoded_features = encode_row(client_row, maid_info)
+                model_input = pd.DataFrame([encoded_features])[feature_columns]
+    
+                # Predict 3-day & 1-week risk
+                prob3 = model_3day.predict_proba(model_input)[0][1]
+                prob7 = model_1week.predict_proba(model_input)[0][1]
+    
+                def risk_color(p):
+                    if p < 0.30: 
+                        return f"🟢 Low ({p*100:.1f}%)"
+                    elif p < 0.60:
+                        return f"🟡 Medium ({p*100:.1f}%)"
+                    else:
+                        return f"🔴 High ({p*100:.1f}%)"
+    
                 with st.expander(f"Maid {match['maid_id']} → {match['Final Score %']}%"):
+    
+                    st.markdown(f"### 🔮 Replacement Risk")
+                    st.write("**Within 3 Days:**", risk_color(prob3))
+                    st.write("**Within 1 Week:**", risk_color(prob7))
+    
+                    st.markdown("---")
                     st.write("**Household & Kids:**", match["Household & Kids Reason"])
                     st.write("**Special Cases:**", match["Special Cases Reason"])
                     st.write("**Pets:**", match["Pets Reason"])
@@ -591,12 +747,11 @@ if uploaded_file:
                     st.write("**Nationality:**", match["Nationality Reason"])
                     st.write("**Cuisine:**", match["Cuisine Reason"])
                     st.write("**Bonus:**", match["Bonus Reasons"])
-
+    
                     with st.expander("🧾 View Complaint History"):
                         maid_id = match["maid_id"]
                         if maid_id in maid_complaints:
-                            complaints_list = maid_complaints[maid_id]
-                            for i, complaint in enumerate(complaints_list, start=1):
+                            for i, complaint in enumerate(maid_complaints[maid_id], start=1):
                                 st.markdown(f"**Complaint {i}:** {complaint}")
                         else:
                             st.info("✅ No previous complaints found for this maid.")
