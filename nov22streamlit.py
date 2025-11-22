@@ -571,11 +571,10 @@ if uploaded_file:
             results_df.to_csv(index=False).encode("utf-8"),
             "matching_results.csv",
             "text/csv"
-        )    
+        )
 
-      st.write("3d model features:", model_3day.feature_name_)
-      st.write("1w model features:", model_1week.feature_name_)
-
+        st.write("3d model features:", model_3day.feature_name_)
+        st.write("1w model features:", model_1week.feature_name_)     
 
     # ---------------- Tab 2: Optimal Matches ----------------
     # ---------------- Preprocessing Step ----------------
