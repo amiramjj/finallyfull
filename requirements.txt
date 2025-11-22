@@ -4,3 +4,8 @@ numpy
 openpyxl
 plotly
 matplotlib
+joblib
+scikit-learn
+lightgbm
+xgboost
+
