@@ -573,6 +573,10 @@ if uploaded_file:
             "text/csv"
         )    
 
+      st.write("3d model features:", model_3day.feature_name_)
+      st.write("1w model features:", model_1week.feature_name_)
+
+
     # ---------------- Tab 2: Optimal Matches ----------------
     # ---------------- Preprocessing Step ----------------
     # Keep only relevant columns
