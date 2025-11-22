@@ -446,9 +446,9 @@ def encode_row(client, maid):
 
    # ----- CLIENT: dayoff -----
    # day = str(client.get('clientmts_dayoff_policy', 'unspecified')).lower()
-    row['client_dayoff_flexible'] = 0
-    row['client_dayoff_work_for_pay'] = 0
-    row['client_dayoff_stay_home_for_pay'] = 0
+   row['client_dayoff_flexible'] = 0
+   row['client_dayoff_work_for_pay'] = 0
+   row['client_dayoff_stay_home_for_pay'] = 0
 
 
     # ----- CLIENT: nationality preference -----
