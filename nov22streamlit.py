@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 model_3day = joblib.load("model_lgb_3day.pkl")
-model_1week = joblib.load("model_lgb_1week.pkl")
+# model_1week = joblib.load("model_lgb_1week.pkl")
 feature_columns = [
    'cc_type', 'years_of_experience', 'total_complaints',
    'maidspeaks_amharic', 'maidspeaks_arabic', 'maidspeaks_english',
@@ -573,8 +573,8 @@ if uploaded_file:
             "text/csv"
         )
 
-        st.write("3d model features:", model_3day.feature_name_)
-        st.write("1w model features:", model_1week.feature_name_)     
+        # st.write("3d model features:", model_3day.feature_name_)
+        # st.write("1w model features:", model_1week.feature_name_)     
 
     # ---------------- Tab 2: Optimal Matches ----------------
     # ---------------- Preprocessing Step ----------------
@@ -751,7 +751,7 @@ if uploaded_file:
                     model_input = pd.DataFrame([encoded])[feature_columns]
             
                     prob3 = model_3day.predict_proba(model_input)[0][1]
-                    prob7 = model_1week.predict_proba(model_input)[0][1]
+                    # prob7 = model_1week.predict_proba(model_input)[0][1]
             
                     def risk_color(p):
                         if p < 0.30: return "🟢 Low"
@@ -759,7 +759,7 @@ if uploaded_file:
                         return "🔴 High"
             
                     st.markdown(f"**Risk (3 days):** {risk_color(prob3)} — {prob3*100:.1f}%")
-                    st.markdown(f"**Risk (1 week):** {risk_color(prob7)} — {prob7*100:.1f}%")
+                    # st.markdown(f"**Risk (1 week):** {risk_color(prob7)} — {prob7*100:.1f}%")
                     st.markdown("---")
             
                     # Existing details
