@@ -530,8 +530,6 @@ if uploaded_file:
     # Create tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Matching Scores", "Optimal Matches","Customer Interface", "Maid Profile Explorer", "Summary Metrics"])
 
-st.write("3d model features:", model_3day.feature_name_)
-st.write("1w model features:", model_1week.feature_name_)   
     # ---------------- Tab 1: Existing Matching ----------------
     with tab1:
         st.write("### Matching Scores (Key Fields Only)")
