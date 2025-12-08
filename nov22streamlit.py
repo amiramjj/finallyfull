@@ -921,10 +921,18 @@ if uploaded_file:
     
             # --- Align by client_name
             merged = results_df[["client_name", "Final Score %"]].rename(columns={"Final Score %": "Tagged Score"})
-            merged = merged.merge(
-                optimal_df[["client_name", "Final Score %"]].rename(columns={"Final Score %": "Best Score"}),
-                on="client_name", how="inner"
-            )
+            # merged = merged.merge(
+            #     optimal_df[["client_name", "Final Score %"]].rename(columns={"Final Score %": "Best Score"}),
+            #     on="client_name", how="inner"
+            # )
+           merged = merged.merge(
+             optimal_df[["client_name", "maid_id", "Final Score %"]].rename(columns={
+                 "maid_id": "best_maid_id",
+                 "Final Score %": "Best Score"
+             }),
+             on="client_name", how="inner"
+         )
+
     
             # --- Compute uplift per client
             merged["Improvement (pp)"] = merged["Best Score"] - merged["Tagged Score"]
