@@ -516,7 +516,7 @@ def encode_row(client, maid):
 # -------------------------------
 # STREAMLIT APP
 # -------------------------------
-st.title("Client–Maid Matching Score Calculator")
+st.title("Maids.cc Decision Support System")
 
 uploaded_file = st.file_uploader("Upload your dataset (CSV or Excel)", type=["csv", "xlsx"])
 if uploaded_file:
