@@ -8,4 +8,5 @@ joblib
 scikit-learn
 lightgbm
 xgboost
+scikit-learn==1.6.1
 
